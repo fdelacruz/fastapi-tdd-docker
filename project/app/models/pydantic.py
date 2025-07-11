@@ -1,5 +1,9 @@
-from pydantic import Basemodel
+from pydantic import BaseModel
 
 
-class SummaryPayloadSchema(Basemodel):
+class SummaryPayloadSchema(BaseModel):
     url: str
+
+
+class SummaryResponseSchema(SummaryPayloadSchema):
+    id: int
