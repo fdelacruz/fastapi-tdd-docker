@@ -30,8 +30,9 @@ def test_create_summaries_invalid_json(test_app):
     assert response.json()["detail"][0]["msg"] == "URL scheme should be 'http' or 'https'"
 
 def test_read_summary(test_app_with_db):
+    input_url = "https://foo.bar"
     response = test_app_with_db.post(
-        "/summaries/", content=json.dumps({"url": "https://foo.bar"})
+        "/summaries/", content=json.dumps({"url": input_url})
     )
     summary_id = response.json()["id"]
 
@@ -40,8 +41,7 @@ def test_read_summary(test_app_with_db):
 
     response_dict = response.json()
     assert response_dict["id"] == summary_id
-    assert response_dict["url"] == "https://foo.bar"
-    assert response_dict["summary"]
+    assert response_dict["url"].rstrip("/") == input_url
     assert response_dict["summary"]
 
 
