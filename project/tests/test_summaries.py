@@ -25,9 +25,14 @@ def test_create_summaries_invalid_json(test_app):
         ]
     }
 
-    response = test_app.post("/summaries/", content=json.dumps({"url": "invalid://url"}))
+    response = test_app.post(
+        "/summaries/", content=json.dumps({"url": "invalid://url"})
+    )
     assert response.status_code == 422
-    assert response.json()["detail"][0]["msg"] == "URL scheme should be 'http' or 'https'"
+    assert (
+        response.json()["detail"][0]["msg"] == "URL scheme should be 'http' or 'https'"
+    )
+
 
 def test_read_summary(test_app_with_db):
     input_url = "https://foo.bar"
@@ -87,6 +92,7 @@ def test_remove_summary(test_app_with_db):
     response = test_app_with_db.delete(f"/summaries/{summary_id}/")
     assert response.status_code == 200
     assert response.json() == {"id": summary_id, "url": "https://foo.bar"}
+
 
 
 def test_remove_summary_incorrect_id(test_app_with_db):
