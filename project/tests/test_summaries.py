@@ -26,7 +26,7 @@ def test_create_summaries_invalid_json(test_app):
 
 def test_read_summary(test_app_with_db):
     response = test_app_with_db.post(
-        "/summaries", content=json.dumps({"url": "https://foo.bar"})
+        "/summaries/", content=json.dumps({"url": "https://foo.bar"})
     )
     summary_id = response.json()["id"]
 
