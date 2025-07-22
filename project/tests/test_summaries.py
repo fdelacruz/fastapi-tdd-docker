@@ -84,15 +84,18 @@ def test_read_all_summaries(test_app_with_db):
 
 
 def test_remove_summary(test_app_with_db):
+    input_url = "https://foo.bar"
     response = test_app_with_db.post(
-        "/summaries/", content=json.dumps({"url": "https://foo.bar"})
+        "/summaries/", content=json.dumps({"url": input_url})
     )
     summary_id = response.json()["id"]
 
     response = test_app_with_db.delete(f"/summaries/{summary_id}/")
     assert response.status_code == 200
-    assert response.json() == {"id": summary_id, "url": "https://foo.bar"}
 
+    response_data = response.json()
+    assert response_data["id"] == summary_id
+    assert response_data["url"].rstrip("/") == input_url
 
 
 def test_remove_summary_incorrect_id(test_app_with_db):

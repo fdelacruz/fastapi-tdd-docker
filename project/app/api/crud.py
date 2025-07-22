@@ -1,12 +1,11 @@
 from typing import List, Union
 
-from app.models.pydantic import SummaryPayloadSchema, SummaryUpdatePayloadSchema
 from app.models.tortoise import TextSummary
 
-from app.models.pydantic import (
+from app.models.pydantic import (  # isort:skip
     SummaryPayloadSchema,
     SummaryUpdatePayloadSchema,
-)  # isort:skip
+)
 
 
 async def post(payload: SummaryPayloadSchema) -> int:
