@@ -7,7 +7,21 @@ from app.api import crud, summaries
 
 
 def test_create_summary(test_app, monkeypatch):
-    pass
+    test_request_payload = {"url": "https://foo.bar"}
+    test_response_payload = {"id": 1, "url": "https://foo.bar/"}
+
+    async def mock_post(payload):
+        return 1
+
+    monkeypatch.setattr(crud, "post", mock_post)
+
+    response = test_app.post(
+        "/summaries/",
+        content=json.dumps(test_request_payload),
+    )
+
+    assert response.status_code == 201
+    assert response.json() == test_response_payload
 
 
 def test_create_summaries_invalid_json(test_app):
