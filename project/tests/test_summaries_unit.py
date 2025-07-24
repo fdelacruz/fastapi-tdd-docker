@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 
@@ -52,7 +52,7 @@ def test_read_summary(test_app, monkeypatch):
         "id": 1,
         "url": "https://foo.bar",
         "summary": "summary",
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
     }
 
     async def mock_get(id):
@@ -82,13 +82,13 @@ def test_read_all_summaries(test_app, monkeypatch):
             "id": 1,
             "url": "https://foo.bar",
             "summary": "summary",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         },
         {
             "id": 2,
             "url": "https://testdrivenn.io",
             "summary": "summary",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         },
     ]
 
@@ -108,7 +108,7 @@ def test_remove_summary(test_app, monkeypatch):
             "id": 1,
             "url": "https://foo.bar",
             "summary": "summary",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
         }
 
     monkeypatch.setattr(crud, "get", mock_get)
@@ -140,7 +140,7 @@ def test_update_summary(test_app, monkeypatch):
         "id": 1,
         "url": "https://foo.bar",
         "summary": "summary",
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
     }
 
     async def mock_put(id, payload):
