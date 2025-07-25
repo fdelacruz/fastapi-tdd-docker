@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timezone
 
 import pytest
+from dateutil.parser import isoparse
 
 from app.api import crud
 
@@ -62,7 +63,15 @@ def test_read_summary(test_app, monkeypatch):
 
     response = test_app.get("/summaries/1/")
     assert response.status_code == 200
-    assert response.json() == test_data
+
+    actual = response.json()
+
+    # Normalize the datetimes to datetime objects for comparison
+    expected = test_data.copy()
+    expected["created_at"] = isoparse(expected["created_at"])
+    actual["created_at"] = isoparse(actual["created_at"])
+
+    assert actual == expected
 
 
 def test_read_summary_incorrect_id(test_app, monkeypatch):
@@ -99,7 +108,15 @@ def test_read_all_summaries(test_app, monkeypatch):
 
     response = test_app.get("/summaries/")
     assert response.status_code == 200
-    assert response.json() == test_data
+
+    actual = response.json()
+
+    # Normalize datetime strings to datetime objects
+    for a, e in zip(actual, test_data):
+        a["created_at"] = isoparse(a["created_at"])
+        e["created_at"] = isoparse(e["created_at"])
+
+    assert actual == test_data
 
 
 def test_remove_summary(test_app, monkeypatch):
@@ -150,10 +167,19 @@ def test_update_summary(test_app, monkeypatch):
 
     response = test_app.put(
         "/summaries/1/",
-        data=json.dumps(test_request_payload),
+        content=json.dumps(test_request_payload),
     )
+
     assert response.status_code == 200
-    assert response.json() == test_response_payload
+
+    actual = response.json()
+
+    # Normalize datetimes for comparison
+    actual["created_at"] = isoparse(actual["created_at"])
+    expected = test_response_payload.copy()
+    expected["created_at"] = isoparse(expected["created_at"])
+
+    assert actual == expected
 
 
 @pytest.mark.parametrize(
@@ -221,7 +247,7 @@ def test_update_summary_invalid(
 
     monkeypatch.setattr(crud, "put", mock_put)
 
-    response = test_app.put(f"/summaries/{summary_id}/", data=json.dumps(payload))
+    response = test_app.put(f"/summaries/{summary_id}/", content=json.dumps(payload))
     assert response.status_code == status_code
     assert response.json()["detail"] == detail
 
