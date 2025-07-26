@@ -103,7 +103,11 @@ async def test_read_all_summaries(test_app_with_db, monkeypatch):
     assert len(list(filter(lambda d: d["id"] == summary_id, response_list))) == 1
 
 
-def test_remove_summary(test_app_with_db):
+def test_remove_summary(test_app_with_db, monkeypatch):
+    def mock_generate_summary(summary_id, url):
+        return None
+
+    monkeypatch.setattr(summaries, "generate_summary", mock_generate_summary)
     input_url = "https://foo.bar"
     response = test_app_with_db.post(
         "/summaries/", content=json.dumps({"url": input_url})
@@ -138,7 +142,11 @@ def test_remove_summary_incorrect_id(test_app_with_db):
     }
 
 
-def test_update_summary(test_app_with_db):
+def test_update_summary(test_app_with_db, monkeypatch):
+    def mock_generate_summary(summary_id, url):
+        return None
+
+    monkeypatch.setattr(summaries, "generate_summary", mock_generate_summary)
     input_url = "https://foo.bar"
     response = test_app_with_db.post(
         "/summaries/", content=json.dumps({"url": input_url})
