@@ -6,15 +6,10 @@ from app.models.pydantic import (  # isort:skip
     SummaryPayloadSchema,
     SummaryUpdatePayloadSchema,
 )
-from app.summarizer import generate_summary
 
 
 async def post(payload: SummaryPayloadSchema) -> int:
-    article_summary = generate_summary(str(payload.url))
-    summary = TextSummary(
-        url=payload.url,
-        summary=article_summary,
-    )
+    summary = TextSummary(url=payload.url, summary="")
     await summary.save()
     return summary.id
 
