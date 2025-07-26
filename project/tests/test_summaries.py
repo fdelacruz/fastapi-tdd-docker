@@ -3,6 +3,7 @@ import json
 import pytest
 
 from app.api import summaries
+from app.models.tortoise import TextSummary
 
 
 def test_create_summary(test_app_with_db, monkeypatch):
@@ -42,7 +43,12 @@ def test_create_summaries_invalid_json(test_app):
     )
 
 
-def test_read_summary(test_app_with_db):
+@pytest.mark.asyncio
+async def test_read_summary(test_app_with_db, monkeypatch):
+    async def mock_generate_summary(summary_id, url):
+        await TextSummary.filter(id=summary_id).update(summary="Mocked summary")
+
+    monkeypatch.setattr(summaries, "generate_summary", mock_generate_summary)
     input_url = "https://foo.bar"
     response = test_app_with_db.post(
         "/summaries/", content=json.dumps({"url": input_url})
@@ -55,7 +61,7 @@ def test_read_summary(test_app_with_db):
     response_dict = response.json()
     assert response_dict["id"] == summary_id
     assert response_dict["url"].rstrip("/") == input_url
-    assert response_dict["summary"]
+    assert response_dict["summary"] == "Mocked summary"
 
 
 def test_read_summary_incorrect_id(test_app_with_db):
