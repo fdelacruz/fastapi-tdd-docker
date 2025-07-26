@@ -84,7 +84,13 @@ def test_read_summary_incorrect_id(test_app_with_db):
     }
 
 
-def test_read_all_summaries(test_app_with_db):
+@pytest.mark.asyncio
+async def test_read_all_summaries(test_app_with_db, monkeypatch):
+    async def mock_generate_summary(summary_id, url):
+        # Just update the DB record with a dummy summary
+        await TextSummary.filter(id=summary_id).update(summary="Mocked summary")
+
+    monkeypatch.setattr(summaries, "generate_summary", mock_generate_summary)
     response = test_app_with_db.post(
         "/summaries/", content=json.dumps({"url": "https://foo.bar"})
     )
