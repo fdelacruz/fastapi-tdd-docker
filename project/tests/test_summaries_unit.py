@@ -4,10 +4,15 @@ from datetime import datetime, timezone
 import pytest
 from dateutil.parser import isoparse
 
-from app.api import crud
+from app.api import crud, summaries
 
 
 def test_create_summary(test_app, monkeypatch):
+    def mock_generate_summary(summary_id, url):
+        return None
+
+    monkeypatch.setattr(summaries, "generate_summary", mock_generate_summary)
+
     test_request_payload = {"url": "https://foo.bar"}
     test_response_payload = {"id": 1, "url": "https://foo.bar/"}
 
